@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="面向来华留学生的双语智能语伴 Wug——用你的语言加上中文，一起练习、一起适应中国校园与生活。" />
+    <title>Wug · 来华留学生双语语伴</title>
+    <link rel="stylesheet" href="./styles.css?v=13" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="campus-rail" aria-label="项目信息">
+        <div class="rail-brand" aria-label="浙江外国语学院 Wug 国际学生语伴">
+          <span class="brand-seal" aria-hidden="true">
+            <span class="seal-row">ZI</span>
+            <span class="seal-row">SU</span>
+          </span>
+          <div class="rail-brand-copy">
+            <strong>浙江外国语学院</strong>
+            <span>WUG · 来华留学生语伴</span>
+          </div>
+        </div>
+
+        <div class="rail-intro">
+          <p class="rail-kicker">INTERNATIONAL STUDENTS · 国际学生</p>
+          <h1>开口，<br />更自在。</h1>
+          <p>不管你来自哪里，在这里都可以用你的语言，加上中文，一起练习、一起适应中国的校园与生活。</p>
+        </div>
+
+        <div class="language-track" aria-label="今日学习计划">
+          <div class="track-heading">
+            <span>今日练习</span>
+            <strong>DAY 01</strong>
+          </div>
+          <div class="track-progress"><span id="trackProgress"></span></div>
+          <div class="track-meta">
+            <span><b id="messageCount">0</b> 次开口</span>
+            <span>目标 5 次</span>
+          </div>
+        </div>
+
+        <div class="school-signature">
+          <p>明德弘毅 · 博雅通达</p>
+          <strong>浙江外国语学院</strong>
+          <span>Zhejiang International Studies University</span>
+        </div>
+      </aside>
+
+      <main class="conversation" aria-labelledby="chatTitle">
+        <header class="conversation-header">
+          <div class="partner-identity">
+            <div class="partner-avatar">
+              <img src="./assets/wug-logo.png" alt="" />
+              <i></i>
+            </div>
+            <div>
+              <h2 id="chatTitle">Wug</h2>
+              <p>
+                <span class="online-dot"></span>
+                <span id="connectionLabel">智能语伴在线</span>
+                <span class="audience-tag">来华留学生 · 双语</span>
+                <span class="mobile-school-label">浙江外国语学院</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="practice-settings" aria-label="练习设置">
+            <label>
+              <span>语言</span>
+              <select id="languageSelect" aria-label="练习语言">
+                <option>英语</option>
+                <option>日语</option>
+                <option>韩语</option>
+                <option>德语</option>
+                <option>意大利语</option>
+                <option>西班牙语</option>
+                <option>法语</option>
+              </select>
+            </label>
+            <label>
+              <span>难度</span>
+              <select id="levelSelect" aria-label="对话难度">
+                <option>日常交流</option>
+                <option>入门热身</option>
+                <option>进阶表达</option>
+                <option>面试练习</option>
+              </select>
+            </label>
+            <button class="icon-button" id="clearChat" type="button" aria-label="清空聊天记录" title="清空聊天记录">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7m4 4v5m4-5v5" /></svg>
+            </button>
+          </div>
+        </header>
+
+        <section class="messages" id="messages" aria-live="polite" aria-label="聊天记录"></section>
+
+        <div class="conversation-footer">
+          <div class="quick-prompts" id="quickPrompts" aria-label="快捷话题"></div>
+          <form class="composer" id="chatForm">
+            <label class="sr-only" for="messageInput">输入聊天内容</label>
+            <textarea id="messageInput" rows="1" maxlength="1000" placeholder="用你的语言说点什么，Wug 会用外语 + 中文回复你…" required></textarea>
+            <div class="composer-bottom">
+              <span class="input-hint"><kbd>Enter</kbd> 发送 · <kbd>Shift</kbd> + <kbd>Enter</kbd> 换行</span>
+              <button class="send-button" type="submit" aria-label="发送消息">
+                <span>发送</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12 16-8-5 16-3-6-8-2Zm8 2 4-6" /></svg>
+              </button>
+            </div>
+          </form>
+          <p class="privacy-note">对话仅保存在当前浏览器 · Wug 会用「外语 + 中文」双语回复 · AI 回复可能有误，请注意甄别</p>
+        </div>
+      </main>
+
+      <aside class="coach-panel" aria-label="语伴与练习提示">
+        <div class="mascot-card">
+          <div class="mascot-message">
+            <span>Wug 说 / Wug says</span>
+            <strong>先说出口，<br />再一起变更好。</strong>
+          </div>
+          <img src="./assets/wug-logo.png" alt="蓝色手绘 Wug 语伴形象" />
+        </div>
+
+        <section class="tip-card">
+          <div class="section-label"><span>01</span> 今天可以这样开口</div>
+          <blockquote id="dailyPhrase">“I’m still learning, but I’d like to try. / 我还在学，但我想试试看。”</blockquote>
+          <p>先用你的语言说，再用中文确认意思——慢慢就顺了。</p>
+          <button id="usePhrase" type="button">放入输入框</button>
+        </section>
+
+        <section class="tip-card compact">
+          <div class="section-label"><span>02</span> 卡住时 / Stuck?</div>
+          <ul>
+            <li>先用简单句，不追求一次完美<br /><span class="tip-sub">Start simple, don’t chase perfection.</span></li>
+            <li>不太确定的中文词，可以先打出来<br /><span class="tip-sub">Type the Chinese word you’re unsure about.</span></li>
+            <li>让 Wug 帮你改得更自然<br /><span class="tip-sub">Let Wug help you sound more natural.</span></li>
+          </ul>
+        </section>
+
+        <div class="mode-note" id="modeNote">
+          <span></span>
+          <p><strong>双语对话</strong><br />外语 + 中文，随时陪你练</p>
+        </div>
+      </aside>
+    </div>
+    <script defer src="./app.js?v=13"></script>
+  </body>
+</html>
