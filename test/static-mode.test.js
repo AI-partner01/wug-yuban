@@ -7,8 +7,8 @@ const appPath = new URL("../public/app.js", import.meta.url);
 
 test("standalone page uses relative local assets", async () => {
   const html = await readFile(indexPath, "utf8");
-  assert.match(html, /href="\.\/styles\.css\?v=13"/);
-  assert.match(html, /src="\.\/app\.js\?v=13"/);
+  assert.match(html, /href="\.\/styles\.css\?v=14"/);
+  assert.match(html, /src="\.\/app\.js\?v=14"/);
   assert.doesNotMatch(html, /<script[^>]+type="module"/);
   assert.doesNotMatch(html, /(?:href|src)="\/(?!\/)/);
 });

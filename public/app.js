@@ -2,6 +2,8 @@ const storageKey = "zisu-yuban-chat-v3";
 const settingsKey = "zisu-yuban-settings-v2";
 const statsKey = "zisu-yuban-stats-v1";
 const isFileMode = window.location.protocol === "file:";
+// 静态托管（GitHub Pages 等）没有后端 API，检测失败后自动降级为演示模式
+let staticHosting = isFileMode;
 
 const elements = {
   form: document.querySelector("#chatForm"),
@@ -343,35 +345,51 @@ function localDemoReply(message) {
   return hit ? hit.reply : defaultReply;
 }
 
+async function emitDemoReply(onEvent) {
+  const latestUserMessage = [...chat].reverse().find((message) => message.role === "user")?.content || "";
+  const reply = localDemoReply(latestUserMessage);
+  onEvent({ type: "meta", provider: "demo", fallback: false });
+  await new Promise((resolve) => window.setTimeout(resolve, 350));
+  for (let index = 0; index < reply.length; index += 8) {
+    onEvent({ type: "delta", delta: reply.slice(index, index + 8) });
+    await new Promise((resolve) => window.setTimeout(resolve, 22));
+  }
+  return { reply, provider: "demo", fallback: false };
+}
+
+function enterStaticDemoMode() {
+  if (staticHosting) return;
+  staticHosting = true;
+  elements.connection.textContent = "演示模式 · 在线样例";
+  elements.modeNote.classList.add("demo");
+  elements.modeNote.innerHTML =
+    '<span></span><p><strong>在线演示</strong><br />当前为静态托管样例，预设话题双语对话；部署服务端后自动接入智能对话</p>';
+}
+
 async function requestReply(onEvent) {
-  if (isFileMode) {
-    const latestUserMessage = [...chat].reverse().find((message) => message.role === "user")?.content || "";
-    const reply = localDemoReply(latestUserMessage);
-    onEvent({ type: "meta", provider: "demo", fallback: false });
-    await new Promise((resolve) => window.setTimeout(resolve, 350));
-    for (let index = 0; index < reply.length; index += 8) {
-      onEvent({ type: "delta", delta: reply.slice(index, index + 8) });
-      await new Promise((resolve) => window.setTimeout(resolve, 22));
-    }
-    return { reply, provider: "demo", fallback: false };
+  if (staticHosting) {
+    return emitDemoReply(onEvent);
   }
 
-  const response = await fetch("/api/chat", {
-    method: "POST",
-    headers: {
-      Accept: "application/x-ndjson",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      messages: chat.map(({ role, content }) => ({ role, content })),
-      language: settings.language,
-      level: settings.level,
-    }),
-  });
-
-  if (!response.ok) {
-    const payload = await response.json().catch(() => ({}));
-    throw new Error(payload.error || "发送失败");
+  let response;
+  try {
+    response = await fetch("./api/chat", {
+      method: "POST",
+      headers: {
+        Accept: "application/x-ndjson",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messages: chat.map(({ role, content }) => ({ role, content })),
+        language: settings.language,
+        level: settings.level,
+      }),
+    });
+    if (!response.ok) throw new Error("offline");
+  } catch {
+    // 静态托管环境没有 /api/chat，自动降级为预设双语演示
+    enterStaticDemoMode();
+    return emitDemoReply(onEvent);
   }
 
   if (!response.headers.get("content-type")?.includes("application/x-ndjson")) {
@@ -480,11 +498,12 @@ async function loadStatus() {
     return;
   }
   try {
-    const response = await fetch("/api/health");
+    const response = await fetch("./api/health");
     if (!response.ok) throw new Error("offline");
     elements.connection.textContent = "智能语伴在线";
   } catch {
-    elements.connection.textContent = "连接暂不可用";
+    // GitHub Pages 等静态托管没有 /api/health，进入在线演示模式
+    enterStaticDemoMode();
   }
 }
 
